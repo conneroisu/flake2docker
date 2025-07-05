@@ -8,7 +8,7 @@
 - 🎯 **Zero modification** to your existing flake.nix files
 - 🔧 **Two CLI variants**: basic and advanced with extensive configuration options
 - 📦 **Layered images** for better caching and smaller layers
-- 🌐 **Multi-architecture support** (linux/amd64, linux/arm64)
+- 🌐 **Multi-platform support** (cross-system builds)
 - 🏗️ **Registry integration** with push/pull capabilities
 - 🔐 **Proper user management** and permissions
 - 📊 **Verbose logging** and debugging support
@@ -89,17 +89,17 @@ flake2docker-advanced \
     --registry docker.io/username \
     --push
 
-# Multi-architecture build
-flake2docker-advanced \
-    --platform linux/amd64,linux/arm64 \
-    --registry ghcr.io/username/myapp \
-    --push
+# Note: Multi-architecture builds require Docker buildx
+# flake2docker-advanced \
+#     --platform linux/amd64,linux/arm64 \
+#     --registry ghcr.io/username/myapp \
+#     --push
 
-# Build with caching
-flake2docker-advanced \
-    --cache-from type=registry,ref=myapp:cache \
-    --cache-to type=registry,ref=myapp:cache,mode=max \
-    --push
+# Note: Caching features are planned for future releases
+# flake2docker-advanced \
+#     --cache-from type=registry,ref=myapp:cache \
+#     --cache-to type=registry,ref=myapp:cache,mode=max \
+#     --push
 ```
 
 ## Command Line Options
@@ -125,9 +125,9 @@ flake2docker-advanced \
 | `--layered` | Use buildLayeredImage | `false` |
 | `--registry URL` | Registry URL | - |
 | `--push` | Push to registry | `false` |
-| `--platform PLATFORM` | Target platform | - |
-| `--cache-from SOURCE` | Cache source | - |
-| `--cache-to DEST` | Cache destination | - |
+| `--platform PLATFORM` | Target platform (future feature) | - |
+| `--cache-from SOURCE` | Cache source (future feature) | - |
+| `--cache-to DEST` | Cache destination (future feature) | - |
 | `--build-arg KEY=VALUE` | Build arguments | - |
 | `--label KEY=VALUE` | Image labels | - |
 | `--volume PATH` | Volume mount points | - |
@@ -192,14 +192,13 @@ docker run -it --rm \
     webapp:latest
 ```
 
-### Example 3: Multi-Architecture Build for Registry
+### Example 3: Registry Build with Labels
 
 ```bash
 flake2docker-advanced \
     --name myproject \
     --tag v1.0.0 \
     --registry ghcr.io/username \
-    --platform linux/amd64,linux/arm64 \
     --layered \
     --label "org.opencontainers.image.source=https://github.com/username/myproject" \
     --label "org.opencontainers.image.version=v1.0.0" \
