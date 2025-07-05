@@ -41,6 +41,79 @@ nix profile install github:conneroisu/flake2docker
 nix run github:conneroisu/flake2docker -- --help
 ```
 
+### Adding to Your Flake
+
+Add flake2docker as an input to your `flake.nix`:
+
+```nix
+{
+  description = "Your project description";
+  
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake2docker.url = "github:conneroisu/flake2docker";
+  };
+  
+  outputs = { self, nixpkgs, flake2docker, ... }:
+    let
+      system = "x86_64-linux"; # or your target system
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      # Include flake2docker in your devShell
+      devShells.default = pkgs.mkShell {
+        buildInputs = [
+          flake2docker.packages.${system}.flake2docker
+          flake2docker.packages.${system}.flake2docker-advanced
+          # your other dependencies...
+        ];
+      };
+      
+      # Or make it available as a package
+      packages = {
+        inherit (flake2docker.packages.${system}) flake2docker flake2docker-advanced;
+      };
+    };
+}
+```
+
+### Adding to NixOS Configuration
+
+```nix
+# configuration.nix or flake-based NixOS
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake2docker.url = "github:conneroisu/flake2docker";
+  };
+
+  outputs = { nixpkgs, flake2docker, ... }: {
+    nixosConfigurations.yourhostname = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        {
+          environment.systemPackages = [
+            flake2docker.packages.x86_64-linux.flake2docker
+            flake2docker.packages.x86_64-linux.flake2docker-advanced
+          ];
+        }
+      ];
+    };
+  };
+}
+```
+
+### Adding to Home Manager
+
+```nix
+# home.nix
+{ inputs, pkgs, ... }: {
+  home.packages = [
+    inputs.flake2docker.packages.${pkgs.system}.flake2docker
+    inputs.flake2docker.packages.${pkgs.system}.flake2docker-advanced
+  ];
+}
+```
+
 ### Development Installation
 
 ```bash
