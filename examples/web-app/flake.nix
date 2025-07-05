@@ -20,8 +20,6 @@
             
             # Build tools
             esbuild
-            webpack
-            vite
             
             # Development tools
             git
@@ -40,18 +38,21 @@
             nodePackages.prettier
             
             # Testing
-            nodePackages.jest
             playwright
           ];
           
           shellHook = ''
+            export NODE_ENV=development
+            export PORT=3000
+            export API_PORT=8080
+            
             echo "🌐 Web Application Development Environment"
             echo "================================"
             echo "🚀 Node.js: $(node --version)"
             echo "📦 Package managers: yarn, pnpm"
-            echo "🔧 Build tools: esbuild, webpack, vite"
+            echo "🔧 Build tools: esbuild"
             echo "🗄️ Databases: postgresql, sqlite"
-            echo "🧪 Testing: jest, playwright"
+            echo "🧪 Testing: playwright"
             echo ""
             echo "Common commands:"
             echo "  yarn install     - Install dependencies"
@@ -68,13 +69,6 @@
           
           # Environment variables
           NIX_SHELL_PRESERVE_PROMPT = 1;
-          
-          # Additional environment setup
-          sessionVariables = {
-            NODE_ENV = "development";
-            PORT = "3000";
-            API_PORT = "8080";
-          };
         };
       });
 }

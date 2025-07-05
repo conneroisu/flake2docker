@@ -61,15 +61,20 @@
           devops = pkgs.mkShell {
             buildInputs = with pkgs; [
               docker
-              kubernetes
-              helm
               kubectl
-              terraform
               ansible
+              jq
+              curl
+              git
+            ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+              kubernetes  # Only available on Linux
+              helm        # Only available on Linux
             ];
             shellHook = ''
               echo "⚙️ DevOps environment"
-              echo "📦 Available: docker, kubernetes, helm, kubectl, terraform, ansible"
+              echo "📦 Available: docker, kubectl, ansible, jq, curl, git"
+              ${pkgs.lib.optionalString pkgs.stdenv.isLinux "echo \"📦 Linux-only: kubernetes, helm\""}
+              echo "ℹ️  Note: terraform removed due to license restrictions"
             '';
           };
           
@@ -79,12 +84,12 @@
               postgresql
               mysql80
               redis
-              mongodb
               sqlite
             ];
             shellHook = ''
               echo "🗄️ Database development environment"
-              echo "📦 Available: postgresql, mysql, redis, mongodb, sqlite"
+              echo "📦 Available: postgresql, mysql, redis, sqlite"
+              echo "ℹ️  Note: mongodb removed due to license restrictions"
             '';
           };
         };
